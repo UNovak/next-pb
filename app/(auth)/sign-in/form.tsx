@@ -14,6 +14,7 @@ import { Input } from '@components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { signIn } from '../actions'
 
 const formSchema = z.object({
   email: z.string().min(2).max(50).email(),
@@ -30,9 +31,13 @@ const CustomForm = () => {
     },
   })
 
-  // Submit handler.
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const formData = new FormData()
+    formData.append('email', values.email)
+    formData.append('password', values.password)
+
+    const res = await signIn(formData) // Pass the formData to the server action
+    if (res) console.log(res) // log any server response
   }
 
   return (
@@ -65,6 +70,7 @@ const CustomForm = () => {
             </FormItem>
           )}
         />
+
         <Button type='submit' className='w-full'>
           Sign in
         </Button>
