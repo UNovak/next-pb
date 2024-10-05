@@ -33,3 +33,44 @@ export async function signIn(formData: FormData) {
   // if no errors redirect to '/'
   if (pb?.authStore?.isValid) redirect('/')
 }
+
+export async function signUp(formData: FormData) {
+  const firstName = formData.get('firstName') as string
+  const lastName = formData.get('lastName') as string
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+
+  // Pocketbase instance
+  const pb = new PocketBase(process.env.POCKETBASE_URL)
+
+  try {
+    // try creating a new record in users collection
+    const res = await pb.collection('users').create({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password,
+      passwordConfirm: password,
+    })
+
+    // authenticate the created user
+    const { token, record: model } = await pb
+      .collection('users')
+      .authWithPassword(email, password)
+
+    const cookie = JSON.stringify({ token, model })
+
+    cookies().set('pb_auth', cookie, {
+      secure: true,
+      path: '/',
+      sameSite: 'strict',
+      httpOnly: true,
+    })
+
+    // catch errors
+  } catch (err) {
+    return { status: 400, message: 'something went wrong' }
+  }
+
+  if (pb?.authStore?.isValid) redirect('/')
+}
