@@ -22,7 +22,7 @@ const Navbar = () => {
   ]
 
   return (
-    <nav className='flex h-20 w-full items-center justify-between px-10 shadow-md'>
+    <nav className='fixed flex h-20 w-full items-center justify-between px-10 shadow-md'>
       {/* left */}
       <div className='text-xl font-bold'>
         <Link href='/'>next-pb</Link>

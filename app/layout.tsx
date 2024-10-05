@@ -22,7 +22,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange>
           <Navbar />
-          {children}
+          <main className='flex min-h-screen flex-col items-center justify-center'>
+            {children}
+          </main>
         </ThemeProvider>
       </body>
     </html>
