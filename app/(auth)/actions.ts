@@ -87,3 +87,9 @@ export async function signUp(formData: FormData) {
 
   if (pb?.authStore?.isValid) redirect('/')
 }
+
+export async function signOut() {
+  console.log('signing out')
+  cookies().delete('pb_auth')
+  redirect('/')
+}
