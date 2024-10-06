@@ -4,20 +4,28 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import PocketBase from 'pocketbase'
 
+const pb = new PocketBase(process.env.POCKETBASE_URL)
+
 export async function signIn(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
-  const pb = new PocketBase(process.env.POCKETBASE_URL)
-
   try {
-    // Authenticate using email and password
+    // authenticate using email and password
     const { token, record: model } = await pb
       .collection('users')
       .authWithPassword(email, password)
 
-    const cookie = JSON.stringify({ token, model })
+    // create cookie with esential data only
+    const cookie = JSON.stringify({
+      token: token,
+      authenticated: true,
+      verified: model.verified,
+      id: model.id,
+      avatar: model.avatar,
+    })
 
+    // set cookie
     cookies().set('pb_auth', cookie, {
       secure: true,
       path: '/',
@@ -40,9 +48,6 @@ export async function signUp(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
-  // Pocketbase instance
-  const pb = new PocketBase(process.env.POCKETBASE_URL)
-
   try {
     // try creating a new record in users collection
     const res = await pb.collection('users').create({
@@ -58,8 +63,16 @@ export async function signUp(formData: FormData) {
       .collection('users')
       .authWithPassword(email, password)
 
-    const cookie = JSON.stringify({ token, model })
+    // create cookie with esential data only
+    const cookie = JSON.stringify({
+      token: token,
+      authenticated: true,
+      verified: model.verified,
+      id: model.id,
+      avatar: model.avatar,
+    })
 
+    // set cookie
     cookies().set('pb_auth', cookie, {
       secure: true,
       path: '/',
