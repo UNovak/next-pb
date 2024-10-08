@@ -1,13 +1,13 @@
 'use client'
-
+import { useAuth } from '@components/auth-provider'
 import { Button } from '@components/ui/button'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from '@components/ui/form'
 import { Input } from '@components/ui/input'
 
@@ -24,6 +24,8 @@ const formSchema = z.object({
 })
 
 const CustomForm = () => {
+  const { update } = useAuth()
+
   // Default values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,7 +36,6 @@ const CustomForm = () => {
       password: '',
     },
   })
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData()
     formData.append('firstName', values.firstName)
@@ -43,7 +44,9 @@ const CustomForm = () => {
     formData.append('password', values.password)
 
     const res = await signUp(formData)
-    if (res) console.log(res)
+    if (res)
+      console.log(res) // log any server response
+    else update() // update auth value in context
   }
 
   return (

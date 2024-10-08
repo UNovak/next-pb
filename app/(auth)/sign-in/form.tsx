@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@components/auth-provider'
 import { Button } from '@components/ui/button'
 import {
   Form,
@@ -22,6 +23,8 @@ const formSchema = z.object({
 })
 
 const CustomForm = () => {
+  const { update } = useAuth()
+
   // Default values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,7 +40,9 @@ const CustomForm = () => {
     formData.append('password', values.password)
 
     const res = await signIn(formData) // Pass the formData to the server action
-    if (res) console.log(res) // log any server response
+    if (res)
+      console.log(res) // log any server response
+    else update() // update auth context
   }
 
   return (

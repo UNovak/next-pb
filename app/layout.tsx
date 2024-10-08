@@ -1,3 +1,4 @@
+import { AuthProvider } from '@components/auth-provider'
 import { Navbar } from '@components/navbar'
 import ThemeProvider from '@components/theme-provider'
 import type { Metadata } from 'next'
@@ -21,10 +22,12 @@ export default function RootLayout({
           defaultTheme='system'
           enableSystem
           disableTransitionOnChange>
-          <Navbar />
-          <main className='flex min-h-screen flex-col items-center justify-center'>
-            {children}
-          </main>
+          <AuthProvider>
+            <Navbar />
+            <main className='flex min-h-screen flex-col items-center justify-center'>
+              {children}
+            </main>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
