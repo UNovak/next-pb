@@ -1,14 +1,20 @@
 'use client'
 
+import { signOut } from '@app/(auth)/actions'
+import { useAuth } from '@components/auth-provider'
 import { Button, buttonVariants } from '@ui/button'
 import { ModeToggle } from '@ui/mode-toggle'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
 
 const Navbar = () => {
   const pathname = usePathname()
-  const [auth, setAuth] = useState(true)
+  const { authenticated, update } = useAuth()
+
+  const handleSignOut = async () => {
+    const res = await signOut()
+    update()
+  }
 
   const navLinks = [
     { ref: '/about', label: 'About' },
@@ -52,8 +58,8 @@ const Navbar = () => {
 
       {/* right */}
       <div className='flex items-center space-x-4'>
-        {auth ? (
-          <Button variant='destructive' onClick={() => setAuth(false)}>
+        {authenticated ? (
+          <Button variant='destructive' onClick={() => handleSignOut()}>
             Sign Out
           </Button>
         ) : (
