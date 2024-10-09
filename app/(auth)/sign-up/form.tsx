@@ -44,9 +44,14 @@ const CustomForm = () => {
     formData.append('password', values.password)
 
     const res = await signUp(formData)
-    if (res)
+    if (res) {
       console.log(res) // log any server response
-    else update() // update auth value in context
+      return
+    }
+    localStorage.setItem('auth-session', JSON.stringify(true)) //set localStorage session
+    update() // update auth value in context
+  }
+
   }
 
   return (
