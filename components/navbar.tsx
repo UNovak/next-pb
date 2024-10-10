@@ -14,6 +14,7 @@ const Navbar = () => {
   const handleSignOut = async () => {
     const res = await signOut()
     localStorage.removeItem('auth-session')
+    localStorage.removeItem('pocketbase_auth')
     update()
   }
 
