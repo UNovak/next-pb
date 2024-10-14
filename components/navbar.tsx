@@ -19,6 +19,7 @@ import { usePathname } from 'next/navigation'
 
 const Navbar = () => {
   const pathname = usePathname()
+  const isDashboard = pathname.startsWith('/dashboard')
   const { authenticated, update } = useAuth()
 
   const handleSignOut = async () => {
@@ -51,7 +52,7 @@ const Navbar = () => {
   ]
 
   return (
-    <nav className='fixed flex h-20 w-full items-center justify-between px-10 shadow-md'>
+    <nav className='fixed flex h-20 w-full items-center justify-between border-b px-10 shadow-md'>
       {/* left */}
       <div className='text-xl font-bold'>
         <Link href='/'>next-pb</Link>
@@ -86,71 +87,74 @@ const Navbar = () => {
             <Link href='/sign-up'>Sign Up</Link>
           </Button>
         </div>
-        <DropdownMenu>
-          {/* not available to !authenticated on lg screens and above */}
-          <DropdownMenuTrigger
-            asChild
-            className={`${!authenticated ? 'lg:hidden' : 'flex'}`}>
-            <Button
-              variant='outline'
-              size={`${authenticated ? 'icon' : 'default'}`}
-              className={`${authenticated ? 'overflow-hidden rounded-full' : ''}`}>
-              {authenticated ? (
-                // avatar icon if authenticated
-                <Avatar>
-                  <AvatarImage src='users-avatar-image' />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-              ) : (
-                // menu icon if !authenticated
-                <Menu />
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuGroup className='lg:hidden'>
-              {navLinks.map((link) => (
-                // navigation links only up to large screen
-                <DropdownMenuItem asChild key={link.label}>
-                  <Link
-                    className='w-full'
-                    target={link?.target || '_self'}
-                    href={link.ref}>
-                    {link.label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-              {authenticated && <DropdownMenuSeparator />}
-            </DropdownMenuGroup>
-            {authenticated &&
-              // links for authenticated user to parts of dashboard
-              dashLinks.map((link) => (
-                <DropdownMenuItem asChild key={link.label}>
-                  <Link href={link.ref} className='w-full'>
-                    {link.label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
+        {!isDashboard && (
+          <DropdownMenu>
+            {/* not available on /dashboard routes */}
+            {/* not available to !authenticated on lg screens and above */}
+            <DropdownMenuTrigger
+              asChild
+              className={`${!authenticated ? 'lg:hidden' : 'flex'}`}>
+              <Button
+                variant='outline'
+                size={`${authenticated ? 'icon' : 'default'}`}
+                className={`${authenticated ? 'overflow-hidden rounded-full' : ''}`}>
+                {authenticated ? (
+                  // avatar icon if authenticated
+                  <Avatar>
+                    <AvatarImage src='users-avatar-image' />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                ) : (
+                  // menu icon if !authenticated
+                  <Menu />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuGroup className='lg:hidden'>
+                {navLinks.map((link) => (
+                  // navigation links only up to large screen
+                  <DropdownMenuItem asChild key={link.label}>
+                    <Link
+                      className='w-full'
+                      target={link?.target || '_self'}
+                      href={link.ref}>
+                      {link.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+                {authenticated && <DropdownMenuSeparator />}
+              </DropdownMenuGroup>
+              {authenticated &&
+                // links for authenticated user to parts of dashboard
+                dashLinks.map((link) => (
+                  <DropdownMenuItem asChild key={link.label}>
+                    <Link href={link.ref} className='w-full'>
+                      {link.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
 
-            <DropdownMenuSeparator />
-            {!authenticated ? (
-              // sign in/up links
-              authLinks.map((link) => (
-                <DropdownMenuItem asChild key={link.label}>
-                  <Link href={link.ref} className='w-full'>
-                    {link.label}
-                  </Link>
+              <DropdownMenuSeparator />
+              {!authenticated ? (
+                // sign in/up links
+                authLinks.map((link) => (
+                  <DropdownMenuItem asChild key={link.label}>
+                    <Link href={link.ref} className='w-full'>
+                      {link.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))
+              ) : (
+                <DropdownMenuItem
+                  onClick={() => handleSignOut()}
+                  className='w-full focus:bg-destructive/90'>
+                  Sign Out
                 </DropdownMenuItem>
-              ))
-            ) : (
-              <DropdownMenuItem
-                onClick={() => handleSignOut()}
-                className='w-full focus:bg-destructive/90'>
-                Sign Out
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </nav>
   )
